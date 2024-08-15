@@ -1,6 +1,7 @@
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import { Component } from "react";
 import { Props } from "./types";
+import { SCREEN_HEIGHT } from "../../utils/constants";
 import PokemonCard from "../PokemonCard";
 
 export default class PokemonList extends Component<Props> {
@@ -9,7 +10,7 @@ export default class PokemonList extends Component<Props> {
   }
 
   render() {
-    const { data, navigation } = this.props;
+    const { data, navigation, loadPokemons } = this.props;
 
     if (data?.length === 0)
       return (
@@ -26,7 +27,10 @@ export default class PokemonList extends Component<Props> {
         renderItem={({ item }) => (
           <PokemonCard item={item} navigation={navigation} />
         )}
+        onEndReached={() => loadPokemons()}
+        onEndReachedThreshold={0.2}
         contentContainerStyle={styles.list}
+        style={{ height: SCREEN_HEIGHT }}
       />
     );
   }
@@ -39,6 +43,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   list: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
   },

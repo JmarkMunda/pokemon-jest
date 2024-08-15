@@ -6,7 +6,8 @@ type NavigationProps = NativeStackScreenProps<RootStackParamList, "List">;
 export interface Props extends NavigationProps {}
 
 export interface State {
-  searchQuery: string;
   pokemons: Pokelist["results"];
+  searchQuery: string;
+  offset: number;
   isLoading: boolean;
 }

@@ -2,10 +2,12 @@ import { StyleSheet, View } from "react-native";
 import { Component } from "react";
 import { Props, State } from "./types";
 import { getPokemonsAsync } from "../../services/api";
+import { debounceAsync } from "../../utils/helpers";
 import Searchbar from "../../components/Searchbar";
 import PokemonList from "../../components/PokemonList";
 import Loading from "../../components/Loading";
-import { debounceAsync } from "../../utils/helpers";
+
+const LIMIT = 20;
 
 export default class ListScreen extends Component<Props, State> {
   private debouncedFetchPokemons: (query: string) => Promise<void>;
@@ -13,11 +15,13 @@ export default class ListScreen extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      searchQuery: "",
       pokemons: [],
+      searchQuery: "",
+      offset: 0,
       isLoading: false,
     };
 
+    this.fetchPokemons = this.fetchPokemons.bind(this);
     this.debouncedFetchPokemons = debounceAsync(
       this.fetchPokemons.bind(this),
       2000
@@ -34,19 +38,20 @@ export default class ListScreen extends Component<Props, State> {
   ) {
     const { searchQuery } = this.state;
     if (prevState.searchQuery !== searchQuery) {
-      if (!searchQuery) return;
       this.setState({ isLoading: true });
-
       await this.debouncedFetchPokemons(searchQuery);
-      console.log("Searching for pokemon");
-    } else {
-      console.log("Unchanged search query");
     }
   }
 
   async fetchPokemons(search: string = "") {
     this.setState({ isLoading: true });
-    const data = await getPokemonsAsync(search.toLowerCase());
+    // Perform fetch request
+    const data = await getPokemonsAsync(
+      search.toLowerCase(),
+      LIMIT,
+      this.state.offset
+    );
+
     // if use for searching then go to details screen
     if (!!data.id) {
       this.props.navigation.navigate("Details", { id: data.id });
@@ -54,7 +59,11 @@ export default class ListScreen extends Component<Props, State> {
       return;
     }
     // else fetch the list of all pokemons
-    this.setState({ pokemons: data.results ?? [], isLoading: false });
+    this.setState((prev) => ({
+      pokemons: data?.results ? [...prev.pokemons, ...data.results] : [],
+      isLoading: false,
+      offset: prev.offset + 20,
+    }));
   }
 
   handleSearchChange(text: string) {
@@ -72,10 +81,14 @@ export default class ListScreen extends Component<Props, State> {
           onChangeText={(text) => this.handleSearchChange(text)}
           placeholder="Search a pokemon"
         />
-        {isLoading ? (
-          <Loading size="large" color="red" />
+        {searchQuery && isLoading ? (
+          <Loading />
         ) : (
-          <PokemonList data={pokemons} navigation={navigation} />
+          <PokemonList
+            data={pokemons}
+            navigation={navigation}
+            loadPokemons={this.fetchPokemons}
+          />
         )}
       </View>
     );
