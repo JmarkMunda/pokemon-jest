@@ -20,7 +20,7 @@ export default class DetailsScreen extends Component<Props, State> {
     const data = await getPokemonDetailsAsync(id);
     this.setState({
       name: data.name,
-      image: data.sprites.front_default,
+      image: data?.sprites?.front_default,
       types: data.types,
       stats: data.stats,
     });
@@ -33,9 +33,11 @@ export default class DetailsScreen extends Component<Props, State> {
       <ScrollView>
         <View style={styles.container}>
           {/* NAME */}
-          <Text style={styles.text}>{name}</Text>
+          <Text testID="name" style={styles.text}>
+            {name}
+          </Text>
           {/* IMAGE */}
-          <Image source={{ uri: image! }} style={styles.image} />
+          <Image testID="image" source={{ uri: image! }} style={styles.image} />
 
           <View style={styles.card}>
             {/* TYPES */}
@@ -43,7 +45,7 @@ export default class DetailsScreen extends Component<Props, State> {
               <Text style={{ fontWeight: "500" }}>Pokemon Types:</Text>
               {types.map((type, idx) => (
                 <View key={idx} style={styles.badge}>
-                  <Text>{type.type.name}</Text>
+                  <Text testID="type">{type.type.name}</Text>
                 </View>
               ))}
             </View>

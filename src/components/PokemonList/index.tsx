@@ -21,6 +21,7 @@ export default class PokemonList extends Component<Props> {
 
     return (
       <FlatList
+        testID="pokemon-list"
         data={data}
         numColumns={2}
         keyExtractor={(item) => item.name}
