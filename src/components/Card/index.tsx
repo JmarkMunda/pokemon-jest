@@ -1,20 +1,23 @@
-import { StyleSheet, TouchableOpacity } from "react-native"
-import { Component } from "react"
-import { Props } from "./types"
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { Component } from "react";
+import { Props } from "./types";
 
 export default class Card extends Component<Props> {
   constructor(props: Props) {
-    super(props)
+    super(props);
   }
 
   render() {
-    const { children, style } = this.props
+    const { children, style } = this.props;
 
     return (
-      <TouchableOpacity {...this.props} style={[styles.container, style]}>
+      <TouchableOpacity
+        testID="card"
+        {...this.props}
+        style={[styles.container, style]}>
         {children}
       </TouchableOpacity>
-    )
+    );
   }
 }
 
@@ -24,4 +27,4 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
   },
-})
+});

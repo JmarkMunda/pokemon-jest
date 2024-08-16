@@ -15,7 +15,7 @@ defineFeature(feature, (test) => {
   let instance: DetailsScreen;
 
   beforeEach(async () => {
-    jest.resetModules();
+    jest.resetAllMocks();
     props = {
       navigation: { navigate: jest.fn() },
       route: { params: { id: 1 } },
