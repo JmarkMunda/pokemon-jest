@@ -8,7 +8,7 @@ export default class DetailsScreen extends Component<Props, State> {
     super(props);
     this.state = {
       name: "",
-      image: null,
+      image: "",
       stats: [],
       types: [],
     };
@@ -20,7 +20,7 @@ export default class DetailsScreen extends Component<Props, State> {
     const data = await getPokemonDetailsAsync(id);
     this.setState({
       name: data.name,
-      image: data?.sprites?.front_default,
+      image: data.sprites?.front_default ?? "",
       types: data.types,
       stats: data.stats,
     });
@@ -37,8 +37,13 @@ export default class DetailsScreen extends Component<Props, State> {
             {name}
           </Text>
           {/* IMAGE */}
-          <Image testID="image" source={{ uri: image! }} style={styles.image} />
-
+          {image && (
+            <Image
+              testID="image"
+              source={{ uri: image }}
+              style={styles.image}
+            />
+          )}
           <View style={styles.card}>
             {/* TYPES */}
             <View style={styles.badgeContainer}>
@@ -55,7 +60,9 @@ export default class DetailsScreen extends Component<Props, State> {
                 {stats.map((stat, idx) => (
                   <View key={idx} style={styles.stats}>
                     <Text>{stat.stat.name.toUpperCase()}</Text>
-                    <Text style={{ fontWeight: "500" }}>{stat.base_stat}</Text>
+                    <Text testID="stat" style={{ fontWeight: "500" }}>
+                      {stat.base_stat}
+                    </Text>
                   </View>
                 ))}
               </View>

@@ -3,6 +3,7 @@ import { Props } from "../../screens/DetailsScreen/types";
 import { getPokemonDetailsAsync } from "../../services/api";
 import { shallow, ShallowWrapper } from "enzyme";
 import DetailsScreen from "../../screens/DetailsScreen";
+import { Image, ImageSourcePropType } from "react-native";
 
 const feature = loadFeature("./src/__tests__/features/PokemonDetails.feature");
 
@@ -32,27 +33,39 @@ defineFeature(feature, (test) => {
     });
   });
 
-  test("Navigating to the Pokemon Details", ({ given, when, then, and }) => {
+  test("Render Details Screen with Pokemon Data", ({
+    given,
+    when,
+    then,
+    and,
+  }) => {
     given("I am on the Pokemon Details screen", () => {
       wrapper = shallow(<DetailsScreen {...props} />);
     });
 
-    when("the Pokemon Details have finished loading", () => {
+    when("I load the Pokemon Details", async () => {
       instance = wrapper.instance() as DetailsScreen;
+      await instance.componentDidMount();
+      wrapper.update();
     });
 
     then("I should see the pokemon's name", () => {
-      expect(wrapper.find("Text").at(0).text()).toBe("Pikachu");
+      const nameText = wrapper.find("[testID='name']").text();
+      expect(nameText).toBe("Pikachu");
     });
 
     and("I should see the pokemon's image", () => {
-      expect(
-        wrapper.find("Image").findWhere((el) => el.prop("testID") === "image")
-      );
+      expect(wrapper.find("[testID='image']")).toBeTruthy();
+    });
+
+    and("I should see the pokemon's stats", () => {
+      const stat = wrapper.find("[testID='stat']");
+      expect(stat).toBeTruthy();
     });
 
     and("I should see the pokemon's types", () => {
-      wrapper.find("Text").findWhere((el) => el.prop("textID") === "type");
+      const type = wrapper.find("[testID='type']");
+      expect(type).toBeTruthy();
     });
   });
 });

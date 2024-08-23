@@ -77,6 +77,7 @@ export default class ListScreen extends Component<Props, State> {
     return (
       <View style={styles.container}>
         <Searchbar
+          testID="search-bar"
           value={searchQuery}
           onChangeText={(text) => this.handleSearchChange(text)}
           placeholder="Search a pokemon"
